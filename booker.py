@@ -79,9 +79,9 @@ if __name__ == '__main__':
     now = datetime.datetime.now()
     while True:
         now = datetime.datetime.now()
-        now_hour = str(now.hour)
-        now_min = str(now.minute)
-        if now_hour == GRAB_HOUR and now_min == GRAB_MINUTE:
+        now_hour = now.hour
+        now_min = now.minute
+        if int(now_hour) == int(GRAB_HOUR) and int(now_min) == int(GRAB_MINUTE):
             print(f"[ {now.hour} : {now.minute} ] Start to grab!!!!")
             break
         time.sleep(1)
