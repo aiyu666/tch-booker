@@ -9,6 +9,39 @@ from dotenv import load_dotenv
 load_dotenv(override=True)
 
 
+def timer():
+    now = datetime.datetime.now()
+    while True:
+        now = datetime.datetime.now()
+        now_hour = int(now.hour)
+        now_min = int(now.minute)
+        target_hour = int(GRAB_HOUR)
+        target_min = int(GRAB_MINUTE)
+        if now_hour == target_hour and now_min == target_min:
+            print(f"[ {now.hour} : {now.minute} ] Start to grab !!!!")
+            break
+        time.sleep(1)
+        print(f"[ {now.hour} : {now.minute} ] It's not time yet. Target time is: [ {target_hour} : {target_min} ]")
+        continue
+
+
+def print_info():
+    print('------------- Input Info -------------')
+    print(f"""
+    ID: {os.getenv('ID')}, \n
+    BIRTH_YEAR: {os.getenv('BIRTH_YEAR')}, \n
+    BIRTH_MONTH: {os.getenv('BIRTH_MONTH')}, \n
+    BIRTH_DATE: {os.getenv('BIRTH_DATE')}, \n
+    DOCTOR_NAME: {os.getenv('DOCTOR_NAME')}, \n
+    CALENDAR_INDEX: {os.getenv('CALENDAR_INDEX')}, \n
+    GRAB_HOUR: {os.getenv('GRAB_HOUR')}, \n
+    GRAB_MINUTE: {os.getenv('GRAB_MINUTE')} \n
+    DURANTION: {os.getenv('DURANTION')}, \n
+    FREQUENCY: {os.getenv('FREQUENCY')}
+    """)
+    print('--------------------------------------')
+
+
 def get_string_from_image():
     img = Image.open('image.png')
     result = int(pytesseract.image_to_string(img))
@@ -51,6 +84,10 @@ def make_an_appointment(doctor_name: str, index: str):
 
     response = requests.request("POST", url, data=payload, headers=headers, params=querystring)
 
+
+def grab_vaccine():
+    check_book_success(ID, BIRTH_YEAR, BIRTH_MONTH, BIRTH_DATE, DOCTOR_NAME)
+
 if __name__ == '__main__':
     ID=os.getenv('ID')
     BIRTH_YEAR=os.getenv('BIRTH_YEAR')
@@ -62,35 +99,13 @@ if __name__ == '__main__':
     GRAB_MINUTE=os.getenv('GRAB_MINUTE')
     DURANTION=os.getenv('DURANTION')
     FREQUENCY=os.getenv('FREQUENCY')
-    print('------------- Input Info -------------')
-    print(f"""
-    ID: {ID}, \n
-    BIRTH_YEAR: {BIRTH_YEAR}, \n
-    BIRTH_MONTH: {BIRTH_MONTH}, \n
-    BIRTH_DATE: {BIRTH_DATE}, \n
-    DOCTOR_NAME: {DOCTOR_NAME}, \n
-    CALENDAR_INDEX: {CALENDAR_INDEX}, \n
-    GRAB_HOUR: {GRAB_HOUR}, \n
-    GRAB_MINUTE: {GRAB_MINUTE} \n
-    DURANTION: {DURANTION}, \n
-    FREQUENCY: {FREQUENCY}
-    """)
-    print('--------------------------------------')
-    now = datetime.datetime.now()
-    while True:
-        now = datetime.datetime.now()
-        now_hour = now.hour
-        now_min = now.minute
-        if int(now_hour) == int(GRAB_HOUR) and int(now_min) == int(GRAB_MINUTE):
-            print(f"[ {now.hour} : {now.minute} ] Start to grab!!!!")
-            break
-        time.sleep(1)
-        print(f"[ {now.hour} : {now.minute} ] It's not time yet.")
-        continue
-        
+    print_info()
+    timer()
+
     # while True:
-    #     if check_book_success(ID, BIRTH_YEAR, BIRTH_MONTH, BIRTH_DATE, DOCTOR_NAME):
-    #         print("搶到啦")
-            
-    #     else:
-    #         print("哭哭沒搶到")
+    if grab_vaccine():
+        print("搶到啦")
+        # break
+        
+    else:
+        print("哭哭沒搶到")
